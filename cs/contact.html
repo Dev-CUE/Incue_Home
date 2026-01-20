@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Incue</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #004494;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">INCUE</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About Us</a></li>
+                    <li class="dropdown">
+                        <a href="../products/erp.html">Products</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../products/erp.html">ERP</a></li>
+                            <li><a href="../products/mes.html">MES/POP</a></li>
+                            <li><a href="../products/groupware.html">Groupware</a></li>
+                            <li><a href="../products/iiot.html">iIOT</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="../services/si.html">Services</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../services/consulting.html">Consulting</a></li>
+                            <li><a href="../services/si.html">System Integration</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="contact.html" class="active">CS Center</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" style="height: 60vh;">
+        <div class="hero-content">
+            <h1>Contact Us</h1>
+            <p>궁금하신 점이 있으시면 언제든지 문의해주세요.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="contact-form">
+                <form onsubmit="event.preventDefault(); alert('문의가 접수되었습니다.');">
+                    <div class="form-group">
+                        <label for="name">이름 (담당자명)</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">회사명</label>
+                        <input type="text" id="company">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">문의내용</label>
+                        <textarea id="message" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">문의하기</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>INCUE</h4>
+                <p>기업 정보화의 동반자, 인큐</p>
+            </div>
+            <div class="footer-col">
+                <h4>Products</h4>
+                <ul>
+                    <li><a href="../products/erp.html">ERP</a></li>
+                    <li><a href="../products/mes.html">MES/POP</a></li>
+                    <li><a href="../products/groupware.html">Groupware</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Service</h4>
+                <ul>
+                    <li><a href="../services/consulting.html">Consulting</a></li>
+                    <li><a href="../services/si.html">System Integration</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="contact.html">Inquiry</a></li>
+                    <li><a href="location.html">Location</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 INCUE. All Rights Reserved.</p>
+        </div>
+    </footer>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>
