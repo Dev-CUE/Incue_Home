@@ -119,6 +119,50 @@ const FormValidator = {
   },
 
   /**
+   * Validates phone number field (optional field)
+   * @param {string} phone - Phone number to validate
+   * @returns {object} - Validation result with isValid and error message
+   */
+  validatePhone: function(phone) {
+    // Phone is optional, so empty is valid
+    if (!phone || typeof phone !== 'string') {
+      return { isValid: true, error: null };
+    }
+
+    const trimmedPhone = phone.trim();
+
+    if (trimmedPhone.length === 0) {
+      return { isValid: true, error: null };
+    }
+
+    // Remove all spaces, hyphens, and parentheses for validation
+    const cleanedPhone = trimmedPhone.replace(/[\s\-()]/g, '');
+
+    // Check if it contains only digits and plus sign (for international format)
+    if (!/^[\d+]+$/.test(cleanedPhone)) {
+      return { isValid: false, error: 'Phone number can only contain numbers, hyphens, and spaces' };
+    }
+
+    // Korean phone number formats:
+    // - Mobile: 010-1234-5678 (10 or 11 digits)
+    // - Seoul: 02-123-4567, 02-1234-5678 (9 or 10 digits)
+    // - Other cities: 031-123-4567, 031-1234-5678 (10 or 11 digits)
+    // International format: +82-10-1234-5678
+
+    const digitCount = cleanedPhone.replace(/\+/g, '').length;
+
+    if (digitCount < 9) {
+      return { isValid: false, error: 'Phone number is too short (minimum 9 digits)' };
+    }
+
+    if (digitCount > 15) {
+      return { isValid: false, error: 'Phone number is too long (maximum 15 digits)' };
+    }
+
+    return { isValid: true, error: null };
+  },
+
+  /**
    * Sanitizes input by trimming whitespace and removing potentially harmful characters
    * @param {string} input - Input to sanitize
    * @returns {string} - Sanitized input
@@ -142,7 +186,7 @@ const FormValidator = {
 
   /**
    * Validates entire contact form
-   * @param {object} formData - Form data with name, email, company, message
+   * @param {object} formData - Form data with name, email, company, phone, message
    * @returns {object} - Validation result with isValid, errors object, and sanitized data
    */
   validateContactForm: function(formData) {
@@ -153,6 +197,7 @@ const FormValidator = {
     const sanitizedName = this.sanitizeInput(formData.name);
     const sanitizedEmail = this.sanitizeInput(formData.email);
     const sanitizedCompany = this.sanitizeInput(formData.company);
+    const sanitizedPhone = this.sanitizeInput(formData.phone);
     const sanitizedMessage = this.sanitizeInput(formData.message);
 
     // Validate name
@@ -177,6 +222,14 @@ const FormValidator = {
       errors.company = companyValidation.error;
     } else {
       sanitizedData.company = sanitizedCompany;
+    }
+
+    // Validate phone (optional)
+    const phoneValidation = this.validatePhone(sanitizedPhone);
+    if (!phoneValidation.isValid) {
+      errors.phone = phoneValidation.error;
+    } else {
+      sanitizedData.phone = sanitizedPhone;
     }
 
     // Validate message
@@ -258,6 +311,7 @@ const ContactFormHandler = {
       name: document.getElementById('name').value,
       email: document.getElementById('email').value,
       company: document.getElementById('company').value,
+      phone: document.getElementById('phone').value,
       message: document.getElementById('message').value
     };
 
@@ -309,6 +363,7 @@ const ContactFormHandler = {
       from_name: data.name,
       from_email: data.email,
       company: data.company || '미입력',
+      phone: data.phone || '미입력',
       message: data.message,
       reply_to: data.email
     };

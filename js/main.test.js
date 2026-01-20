@@ -191,6 +191,80 @@ describe('FormValidator', () => {
     });
   });
 
+  describe('validatePhone', () => {
+
+    test('should accept valid Korean phone numbers', () => {
+      const validPhones = [
+        '010-1234-5678',
+        '02-123-4567',
+        '02-1234-5678',
+        '031-123-4567',
+        '031-1234-5678',
+        '01012345678',
+        '0212345678',
+        '010 1234 5678',
+        '+82-10-1234-5678'
+      ];
+
+      validPhones.forEach(phone => {
+        const result = FormValidator.validatePhone(phone);
+        expect(result.isValid).toBe(true);
+        expect(result.error).toBeNull();
+      });
+    });
+
+    test('should accept empty phone number (optional field)', () => {
+      expect(FormValidator.validatePhone('').isValid).toBe(true);
+      expect(FormValidator.validatePhone(null).isValid).toBe(true);
+      expect(FormValidator.validatePhone(undefined).isValid).toBe(true);
+      expect(FormValidator.validatePhone('   ').isValid).toBe(true);
+    });
+
+    test('should reject phone numbers with invalid characters', () => {
+      const invalidPhones = [
+        '010-1234-567a',
+        '010@1234@5678',
+        '010#1234#5678',
+        'abc-defg-hijk',
+        '010.1234.5678'
+      ];
+
+      invalidPhones.forEach(phone => {
+        const result = FormValidator.validatePhone(phone);
+        expect(result.isValid).toBe(false);
+        expect(result.error).toContain('only contain numbers');
+      });
+    });
+
+    test('should reject phone numbers that are too short', () => {
+      const result = FormValidator.validatePhone('123456');
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('too short');
+    });
+
+    test('should reject phone numbers that are too long', () => {
+      const longPhone = '1'.repeat(16);
+      const result = FormValidator.validatePhone(longPhone);
+      expect(result.isValid).toBe(false);
+      expect(result.error).toContain('too long');
+    });
+
+    test('should accept phone with parentheses', () => {
+      const result = FormValidator.validatePhone('(02) 1234-5678');
+      expect(result.isValid).toBe(true);
+    });
+
+    test('should accept phone at minimum length', () => {
+      const result = FormValidator.validatePhone('02-123-4567');
+      expect(result.isValid).toBe(true);
+    });
+
+    test('should accept international format', () => {
+      const result = FormValidator.validatePhone('+82 10 1234 5678');
+      expect(result.isValid).toBe(true);
+    });
+  });
+
   describe('validateMessage', () => {
 
     test('should accept valid messages', () => {
@@ -301,6 +375,7 @@ describe('FormValidator', () => {
         name: 'John Doe',
         email: 'john@example.com',
         company: 'Acme Corp',
+        phone: '010-1234-5678',
         message: 'I would like to inquire about your services.'
       };
 
@@ -310,14 +385,16 @@ describe('FormValidator', () => {
       expect(result.sanitizedData.name).toBe('John Doe');
       expect(result.sanitizedData.email).toBe('john@example.com');
       expect(result.sanitizedData.company).toBe('Acme Corp');
+      expect(result.sanitizedData.phone).toBe('010-1234-5678');
       expect(result.sanitizedData.message).toBe('I would like to inquire about your services.');
     });
 
-    test('should validate form without optional company field', () => {
+    test('should validate form without optional company and phone fields', () => {
       const formData = {
         name: 'Jane Smith',
         email: 'jane@example.com',
         company: '',
+        phone: '',
         message: 'This is my inquiry message.'
       };
 
@@ -331,6 +408,7 @@ describe('FormValidator', () => {
         name: 'A',
         email: 'test@example.com',
         company: 'Test Corp',
+        phone: '010-1234-5678',
         message: 'This is a test message.'
       };
 
@@ -344,6 +422,7 @@ describe('FormValidator', () => {
         name: 'John Doe',
         email: 'invalid-email',
         company: 'Test Corp',
+        phone: '010-1234-5678',
         message: 'This is a test message.'
       };
 
@@ -352,11 +431,26 @@ describe('FormValidator', () => {
       expect(result.errors.email).toBeTruthy();
     });
 
+    test('should return errors for invalid phone', () => {
+      const formData = {
+        name: 'John Doe',
+        email: 'test@example.com',
+        company: 'Test Corp',
+        phone: '123',
+        message: 'This is a test message.'
+      };
+
+      const result = FormValidator.validateContactForm(formData);
+      expect(result.isValid).toBe(false);
+      expect(result.errors.phone).toBeTruthy();
+    });
+
     test('should return errors for invalid message', () => {
       const formData = {
         name: 'John Doe',
         email: 'test@example.com',
         company: 'Test Corp',
+        phone: '010-1234-5678',
         message: 'Short'
       };
 
@@ -370,6 +464,7 @@ describe('FormValidator', () => {
         name: 'A',
         email: 'invalid',
         company: 'Test Corp',
+        phone: '123',
         message: 'Short'
       };
 
@@ -377,6 +472,7 @@ describe('FormValidator', () => {
       expect(result.isValid).toBe(false);
       expect(result.errors.name).toBeTruthy();
       expect(result.errors.email).toBeTruthy();
+      expect(result.errors.phone).toBeTruthy();
       expect(result.errors.message).toBeTruthy();
     });
 
@@ -385,6 +481,7 @@ describe('FormValidator', () => {
         name: '  John Doe  ',
         email: '  test@example.com  ',
         company: '  Acme Corp  ',
+        phone: '  010-1234-5678  ',
         message: '  This is a valid message with extra spaces.  '
       };
 
@@ -393,6 +490,7 @@ describe('FormValidator', () => {
       expect(result.sanitizedData.name).toBe('John Doe');
       expect(result.sanitizedData.email).toBe('test@example.com');
       expect(result.sanitizedData.company).toBe('Acme Corp');
+      expect(result.sanitizedData.phone).toBe('010-1234-5678');
       expect(result.sanitizedData.message).toBe('This is a valid message with extra spaces.');
     });
 
@@ -401,12 +499,14 @@ describe('FormValidator', () => {
         name: '홍길동',
         email: 'hong@example.com',
         company: '삼성전자',
+        phone: '010-1234-5678',
         message: '제품에 대해 문의드립니다. 상세한 정보를 알고 싶습니다.'
       };
 
       const result = FormValidator.validateContactForm(formData);
       expect(result.isValid).toBe(true);
       expect(result.sanitizedData.name).toBe('홍길동');
+      expect(result.sanitizedData.phone).toBe('010-1234-5678');
     });
   });
 
@@ -472,6 +572,7 @@ describe('FormValidator', () => {
         name: 'A'.repeat(100),
         email: 'test@example.com',
         company: 'B'.repeat(200),
+        phone: '010-1234-5678',
         message: 'C'.repeat(5000)
       };
 
@@ -484,6 +585,7 @@ describe('FormValidator', () => {
         name: 'Jo',
         email: 'a@b.co',
         company: '',
+        phone: '',
         message: '1234567890'
       };
 
@@ -496,6 +598,7 @@ describe('FormValidator', () => {
         name: 'John 홍길동',
         email: 'test@example.com',
         company: 'Acme 삼성',
+        phone: '010-1234-5678',
         message: 'Hello 안녕하세요. This is a test message.'
       };
 
