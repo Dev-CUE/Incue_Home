@@ -10,3 +10,9 @@ Desktop.ini
 .vscode/
 .idea/
 *.swp
+
+# Dependencies
+node_modules/
+
+# Testing
+coverage/
