@@ -227,12 +227,10 @@ if (typeof module !== 'undefined' && module.exports) {
 // Contact Form Handler
 const ContactFormHandler = {
   // EmailJS Configuration
-  // IMPORTANT: Replace these values with your actual EmailJS credentials
-  // Get them from: https://www.emailjs.com/
   config: {
-    serviceId: 'YOUR_SERVICE_ID',        // Replace with your EmailJS Service ID
-    templateId: 'YOUR_TEMPLATE_ID',      // Replace with your EmailJS Template ID
-    publicKey: 'YOUR_PUBLIC_KEY'         // Replace with your EmailJS Public Key
+    serviceId: 'service_o1opv5w',
+    templateId: 'template_v4cn9xm',
+    publicKey: '-_Vt32IpKhfeS3hfl'
   },
 
   /**
